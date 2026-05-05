@@ -28,7 +28,7 @@ import { Label } from "@/components/ui/label";
 import { CartItem } from "@/lib/types/cart";
 import { Eye } from "lucide-react";
 import CartItemDetailsModal from "./CartItemDetailsModal";
-import { useGetShippingPrice } from "@/lib/hooks/useGetShippingPrice";
+
 import { useMemo } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -91,61 +91,46 @@ const CartProducts = () => {
     deleteCartItem(id);
   };
 
-  // 3. Calculate Subtotal, Weight, and Shipping
+  // 3. Calculate Subtotal, Weight, and Dimensions (for display)
   const { subtotal, totalWeight, maxLength } = useMemo(() => {
     let sub = 0;
     let weight = 0;
     let maxL = 0;
 
     cartItems.forEach((item) => {
-      // Subtotal calculation
+      // Each item.totalAmount already includes its shipping cost (set on product page)
       const itemTotal =
         item.totalAmount ||
         (item.serviceId?.price || item.price || 0) * item.quantity;
       sub += itemTotal;
 
-      // Weight and Length calculation for Products
+      // Weight and Length for display purposes
       if (item.product && item.product.selectedFeature) {
         const feature = item.product.selectedFeature;
         const lengthMeters = item.product.unitSize || item.product.range || 0;
         const itemWeight =
           (feature.kgsPerUnit || 0) * lengthMeters * item.quantity;
         weight += itemWeight;
-
         const lengthMm = lengthMeters * 1000;
         if (lengthMm > maxL) maxL = lengthMm;
       } else if (item.serviceId) {
-        // Length calculation for Services (Old structure)
         const serviceSizes = Object.values(item.serviceId.sizes || {});
         const maxServiceL =
           serviceSizes.length > 0 ? Math.max(...(serviceSizes as number[])) : 0;
         if (maxServiceL > maxL) maxL = maxServiceL;
       } else if (item.serviceData) {
-        // Length/Weight for Services (New Structure)
         if (item.serviceData.totalWeight) {
           weight += item.serviceData.totalWeight * item.quantity;
         }
-
         const length = item.serviceData.totalLength || 0;
         if (length > maxL) maxL = length;
       }
     });
 
-    return {
-      subtotal: sub,
-      totalWeight: weight,
-      maxLength: maxL,
-    };
+    return { subtotal: sub, totalWeight: weight, maxLength: maxL };
   }, [cartItems]);
 
-  const { data: shippingData, isLoading: isShippingLoading } = useGetShippingPrice(
-    totalWeight,
-    maxLength,
-    totalWeight > 0
-  );
-
-  const shippingFee = shippingData?.shippingPrice || 0;
-  const total = subtotal + shippingFee;
+  const total = subtotal;
 
   // Handle Checkout (Create Order)
   const handleCheckout = () => {
@@ -453,21 +438,18 @@ const CartProducts = () => {
             <span>€ {subtotal.toFixed(2)}</span>
           </div>
 
-          <div className="flex justify-between items-center">
-            <span className="flex flex-col">
-              <span>Transporte</span>
-              <span className="text-[10px] text-gray-500">
-                {totalWeight.toFixed(2)}kg • {maxLength / 1000}m max
+          {totalWeight > 0 && (
+            <div className="flex justify-between items-center text-gray-500">
+              <span className="flex flex-col">
+                <span>Transporte</span>
+                <span className="text-[10px] text-gray-400">
+                  {totalWeight.toFixed(2)}kg • {maxLength / 1000}m max
+                </span>
               </span>
-            </span>
-            <span>
-              {isShippingLoading ? (
-                <Loader2 className="animate-spin w-4 h-4 ml-auto" />
-              ) : (
-                `€ ${shippingFee.toFixed(2)}`
-              )}
-            </span>
-          </div>
+              <span className="text-xs italic">Incluido</span>
+            </div>
+          )}
+
         </div>
 
         <hr className="my-5" />

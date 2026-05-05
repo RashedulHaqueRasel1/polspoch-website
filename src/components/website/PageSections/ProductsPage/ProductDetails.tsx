@@ -420,7 +420,7 @@ export default function ProductDetails() {
     enabled: !!selectedFeature && totalWeight > 0 && effectiveLengthMm > 0,
   });
 
-  const shippingCost = shippingData?.shippingPrice || 15;
+  const shippingCost = shippingData?.shippingPrice || 0;
   const shippingMethod = shippingData?.shippingStatus?.method || "courier";
 
   const productPrice = useMemo(() => {
