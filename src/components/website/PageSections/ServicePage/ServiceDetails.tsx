@@ -91,6 +91,7 @@ import {
   Minus,
   Plus,
   Info,
+  Tag,
 } from "lucide-react";
 
 const ProductConfigurator = () => {
@@ -181,6 +182,10 @@ const ProductConfigurator = () => {
         quantity,
     );
   };
+
+  const productPrice = calculatePrice();
+  const shippingCost = 35.0;
+  const totalAmount = productPrice + shippingCost;
 
   // Get material color
   const getMaterialColor = () => {
@@ -676,7 +681,7 @@ const ProductConfigurator = () => {
                           Importe Total
                         </span>
                         <div className="text-4xl font-black">
-                          {calculatePrice()} €
+                          {totalAmount} €
                         </div>
                       </div>
                     </div>
@@ -688,6 +693,38 @@ const ProductConfigurator = () => {
                       <ShoppingCart className="w-7 h-7 group-hover:scale-110 transition-transform" />
                       Add to Cart
                     </button>
+
+                    {/* Product Price Section */}
+                    <div className="rounded-2xl border-2 border-slate-100 bg-white p-6 space-y-4 mb-4">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider">
+                          Precio del producto
+                        </h3>
+                      </div>
+                      <div className="bg-slate-50 border-2 border-slate-100 rounded-2xl p-5 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-5">
+                          <div className="w-14 h-14 bg-[#7E1800]/10 rounded-xl flex items-center justify-center text-[#7E1800]">
+                            <Tag size={28} />
+                          </div>
+                          <div>
+                            <div className="text-slate-900 font-black text-lg leading-none mb-1">
+                              Total productos
+                            </div>
+                            <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
+                              Basado en medidas y cantidad
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-black text-slate-900 leading-none mb-1">
+                            €{productPrice.toFixed(2)}
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-bold uppercase">
+                            {quantity} unidad{quantity > 1 ? "es" : ""}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
                     {/* Shipping Method Section */}
                     <div className="rounded-2xl border-2 border-slate-100 bg-[#FFFBF4]/40 p-6 space-y-4">
