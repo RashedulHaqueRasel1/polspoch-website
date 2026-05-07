@@ -13,6 +13,7 @@ import {
   ListChecks,
   Ruler,
   Loader2,
+  Tag,
 } from "lucide-react";
 import { useAddToCart } from "@/lib/hooks/useAddToCart";
 import { toast } from "sonner";
@@ -1024,6 +1025,40 @@ export default function ProductDetails() {
                 />
               )}
 
+              {/* Product Price */}
+              {selectedFeature && (
+                <div className="mb-4 mt-4 p-5 rounded-xl border-2 border-[#7E1800]/20 bg-gradient-to-br from-[#7E1800]/5 to-white">
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-base font-semibold text-gray-900">
+                      Precio del producto
+                    </h3>
+                  </div>
+                  <div className="p-4 rounded-lg border-2 border-[#7E1800]/10 bg-white flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-[#7E1800]/10 flex items-center justify-center text-[#7E1800]">
+                        <Tag size={20} />
+                      </div>
+                      <div>
+                        <div className="font-bold text-base text-gray-800">
+                          Total productos
+                        </div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          Basado en medidas y cantidad
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl font-bold text-gray-900">
+                        €{productPrice.toFixed(2)}
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        {quantity} unidad{quantity > 1 ? "es" : ""}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Shipping Method */}
               {selectedFeature && (
                 <div className="mb-6 mt-4 p-5 rounded-xl border-2 border-[#7E1800]/20 bg-gradient-to-br from-[#7E1800]/5 to-white">
@@ -1109,7 +1144,7 @@ export default function ProductDetails() {
 
                   {/* Price Breakdown */}
                   {selectedFeature && (
-                    <div className="flex-1 bg-gradient-to-br from-[#7E1800]/5 to-white p-4 rounded-xl border-2 border-[#7E1800]/10">
+                    <div className="flex-1 bg-gradient-to-br from-[#7E1800]/5 to-white p-4 mt-6 rounded-xl border-2 border-[#7E1800]/10">
                       {/* Hint for fallback pricing */}
                       {isUsingFallbackLength && hasAnyLengthOption && (
                         <div className="mb-2 p-2 bg-yellow-50 text-yellow-700 text-xs rounded border border-yellow-200">
