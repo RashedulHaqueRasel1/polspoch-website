@@ -478,6 +478,8 @@ export default function ProductDetails() {
     selectedSize2 ||
     selectedFinishQuality;
 
+  const [showUnauthorizedModal, setShowUnauthorizedModal] = useState(false);
+
   const handleAddToCart = () => {
     if (!canCheckout || !product) return;
 
@@ -539,8 +541,11 @@ export default function ProductDetails() {
         handleClearFilters();
         setQuantity(1);
       },
-      onError: (err: { message?: string }) => {
-        toast.error(err?.message || "Failed to add to cart");
+      // onError: (err: { message?: string }) => {
+      //   toast.error(err?.message || "Failed to add to cart");
+      // },
+      onError: () => {
+        setShowUnauthorizedModal(true);
       },
     });
   };
@@ -637,7 +642,39 @@ export default function ProductDetails() {
     );
   }
 
-  return (
+
+  return (<>
+    {showUnauthorizedModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+          <h2 className="text-xl font-bold text-gray-900 mb-3">
+            Unauthorized
+          </h2>
+
+          <p className="text-gray-600 mb-6">
+            You are not authorized to add products to the cart.
+            Please login with an authorized account.
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowUnauthorizedModal(false)}
+              className="px-4 py-2 border rounded-lg"
+            >
+              Close
+            </button>
+
+            <Link
+              href="/login"
+              className="px-4 py-2 bg-[#7E1800] text-white rounded-lg"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    )}
+
     <div className="min-h-screen bg-transparent py-8">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -1044,11 +1081,10 @@ export default function ProductDetails() {
                                     setLengthSelectionType("custom");
                                     setSelectedUnitSizeMm(null);
                                   }}
-                                  className={`w-full py-2 px-3 rounded-lg font-semibold text-xs transition-all ${
-                                    lengthSelectionType === "custom"
-                                      ? "bg-[#7E1800] text-white shadow-md scale-102 ring-2 ring-[#7E1800]/30"
-                                      : "bg-white border border-[#7E1800]/20 text-[#7E1800] hover:bg-[#7E1800]/5 hover:border-[#7E1800]/30"
-                                  }`}
+                                  className={`w-full py-2 px-3 rounded-lg font-semibold text-xs transition-all ${lengthSelectionType === "custom"
+                                    ? "bg-[#7E1800] text-white shadow-md scale-102 ring-2 ring-[#7E1800]/30"
+                                    : "bg-white border border-[#7E1800]/20 text-[#7E1800] hover:bg-[#7E1800]/5 hover:border-[#7E1800]/30"
+                                    }`}
                                 >
                                   {lengthSelectionType === "custom"
                                     ? `Largo personalizado seleccionado: ${rangeLengthMm}mm`
@@ -1109,13 +1145,13 @@ export default function ProductDetails() {
               {/* Shipping Method */}
               {selectedFeature && (
                 <div className="mb-6 mt-4 p-5 rounded-xl border-2 border-[#7E1800]/20 bg-gradient-to-br from-[#7E1800]/5 to-white">
-	                  <div className="flex items-center gap-2 mb-3">
-	                    <h3 className="text-base font-semibold text-gray-900">
-	                      Estimación de envío
-	                    </h3>
-	                    <span className="text-xs text-gray-500">
-	                      Informativa
-	                    </span>
+                  <div className="flex items-center gap-2 mb-3">
+                    <h3 className="text-base font-semibold text-gray-900">
+                      Estimación de envío
+                    </h3>
+                    <span className="text-xs text-gray-500">
+                      Informativa
+                    </span>
                     <Tooltip
                       text={TOOLTIPS.shipping}
                       step="shipping"
@@ -1154,11 +1190,11 @@ export default function ProductDetails() {
                       >
                         €{shippingCost.toFixed(2)}
                       </div>
-	                      <div className="text-xs text-gray-500">
-	                        No incluido en el precio del producto
-	                      </div>
-	                    </div>
-	                  </div>
+                      <div className="text-xs text-gray-500">
+                        No incluido en el precio del producto
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -1201,13 +1237,13 @@ export default function ProductDetails() {
                       )}
 
                       <div className="flex justify-between items-center">
-	                        <span className="text-lg font-bold text-gray-900">
-	                          Total productos:
-	                        </span>
-	                        <span className="text-2xl font-bold text-[#7E1800]">
-	                          €{productPrice.toFixed(2)}
-	                        </span>
-	                      </div>
+                        <span className="text-lg font-bold text-gray-900">
+                          Total productos:
+                        </span>
+                        <span className="text-2xl font-bold text-[#7E1800]">
+                          €{productPrice.toFixed(2)}
+                        </span>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -1289,5 +1325,6 @@ export default function ProductDetails() {
         </div>
       </div>
     </div>
+  </>
   );
 }

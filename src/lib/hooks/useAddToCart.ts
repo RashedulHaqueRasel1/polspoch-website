@@ -17,8 +17,11 @@ export const useAddToCart = ({ token }: UseAddToCartOptions) => {
       console.log("Item added to cart successfully:", data);
     },
 
-    onError: (error) => {
-      console.error("Failed to add item to cart:", error);
+    // onError: (error) => {
+    //   console.error("Failed to add item to cart:", error);
+    // },
+    onError: () => {
+      toast.error("You are not authorized to add to cart");
     },
   });
 };

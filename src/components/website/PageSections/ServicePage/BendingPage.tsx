@@ -16,6 +16,7 @@ import {
 } from "@/lib/services/calculationService";
 import { getOrCreateGuestId } from "@/lib/guestId";
 import { toast } from "sonner";
+import Link from "next/link";
 
 const BendingPage = () => {
   const { data: templates = [], isLoading } = useBendingTemplates();
@@ -181,6 +182,10 @@ const BendingPage = () => {
     }
   };
 
+
+  const [showUnauthorizedModal, setShowUnauthorizedModal] = useState(false);
+
+
   const handleAddToCart = () => {
     if (!calculationResult) {
       toast.error("Please calculate dimensions first");
@@ -208,8 +213,11 @@ const BendingPage = () => {
       onSuccess: () => {
         toast.success("Successfully added to cart");
       },
-      onError: (err: { message?: string }) => {
-        toast.error(err?.message || "Failed to add to cart");
+      // onError: (err: { message?: string }) => {
+      //   toast.error(err?.message || "Failed to add to cart");
+      // },
+      onError: () => {
+        setShowUnauthorizedModal(true);
       },
     });
   };
@@ -217,7 +225,38 @@ const BendingPage = () => {
   const BASE_BOX =
     "w-full h-12 px-3 box-border rounded-xl border-2 flex items-center transition-all duration-300";
 
-  return (
+  return (<>
+    {showUnauthorizedModal && (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4 shadow-xl">
+          <h2 className="text-xl font-bold text-gray-900 mb-3">
+            Unauthorized
+          </h2>
+
+          <p className="text-gray-600 mb-6">
+            You are not authorized to add products to the cart.
+            Please login with an authorized account.
+          </p>
+
+          <div className="flex justify-end gap-3">
+            <button
+              onClick={() => setShowUnauthorizedModal(false)}
+              className="px-4 py-2 border rounded-lg"
+            >
+              Close
+            </button>
+
+            <Link
+              href="/login"
+              className="px-4 py-2 bg-[#7E1800] text-white rounded-lg"
+            >
+              Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    )}
+
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
       <div className="container mx-auto px-4 py-12">
         <div className="text-center mb-12">
@@ -718,6 +757,7 @@ const BendingPage = () => {
         </div>
       </div>
     </div>
+  </>
   );
 };
 
